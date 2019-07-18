@@ -7,6 +7,7 @@
 #include <TWbox.h>
 #include <TTUBE.h>
 #include <THYPE.h>
+#include <TText.h>
 #include <TBRIK.h>
 #include <TNode.h>
 #include <TMarker3DBox.h>
@@ -62,12 +63,15 @@ int main(int argc,char *argv[]){
   int mHit[NUM_BOARD][NUM_CH];
   char iFile[100];
   float velocity = 2.6; //[cm/us]
-  float TimeToZ = 25/1000*velocity; //[cm/ch]
-  float Zoffset = -78.6; //[cm/ch] 
+  float TimeToZ = 25./1000.*velocity; //[cm/ch]
+  float Zoffset = 78.6; //[cm/ch] 
   
   sprintf(iFile,"/np1b/v07/kobaryo/LEPS2ANA/leps2ana/bin/rt/%d.root",run_num);
-  TCanvas *c1 = new TCanvas("Event Display","Event Display",1200,1200);
+  TCanvas *c1 = new TCanvas("Event Display","Event Display",800,1200);
+  c1->SetFillColor(kBlue+4);
   c1->Divide(2,2);
+
+  
   TString pdf;
   pdf.Form("display%d.pdf",run_num);
   c1->Print(pdf + "[", "pdf");    
@@ -77,23 +81,23 @@ int main(int argc,char *argv[]){
   TNode *node1 = new TNode("NODE1","NODE1","BRIK\
 ",0,0,0);
   
-  THYPE *hype  = new THYPE("HYPE","HYPE","void",6,60,35,0);
-  hype->SetLineColor(29);
+  THYPE *hype  = new THYPE("HYPE","HYPE","void",6,60,37,0);
+  hype->SetLineColor(kYellow+1);
   hype->SetNumberOfDivisions(6);
   hype->SetLineWidth(0.01);  
   THYPE *hype2  = new THYPE("HYPE2","HYPE2","void",6,60,0,0);
-  hype2->SetLineColor(12);
+  hype2->SetLineColor(kYellow+1);
   hype2->SetNumberOfDivisions(6);
   hype2->SetLineWidth(1);
     THYPE *hype3  = new THYPE("HYPE3","HYPE3","void",6,60,0,0);
-  hype3->SetLineColor(12);
+  hype3->SetLineColor(kYellow+1);
   hype3->SetNumberOfDivisions(6);
   hype3->SetLineWidth(1);
-  THYPE *hype4  = new THYPE("HYPE4","HYPE4","void",6,6,35,0);
+  THYPE *hype4  = new THYPE("HYPE4","HYPE4","void",6,6,37,0);
   hype4->SetLineColor(8);
   hype4->SetLineWidth(1);  
-  TNode *node2  = new TNode("NODE2","NODE2","HYPE",0,0,-35.);
-  TNode *node3  = new TNode("NODE3","NODE3","HYPE2",0,0,-70.);
+  TNode *node2  = new TNode("NODE2","NODE2","HYPE",0,0,-37.);
+  TNode *node3  = new TNode("NODE3","NODE3","HYPE2",0,0,-74.);
   TNode *node4  = new TNode("NODE4","NODE4","HYPE3",0,0,0.);
   // TNode *node5  = new TNode("NODE5","NODE5","HYPE4",0,0,-35.);
   
@@ -264,10 +268,9 @@ int main(int argc,char *argv[]){
         }
       }
     }
-    printf("*** event number :: %d *** \n",event);
-    printf("trkevent %d  hitpads %d\n",trkevent,hitpad);
     if(hitpad>100){
-      
+    printf("*** event number :: %d *** \n",event);
+    printf("trkevent %d  hitpads %d\n",trkevent,hitpad);  
       if(trkevent%4==0&&trkevent>0){
 	c1->Print(pdf, "pdf");
 	usleep(1000000);
@@ -280,19 +283,21 @@ int main(int argc,char *argv[]){
       TView3D *view =(TView3D*)TView3D::CreateView(1);
       TAxis3D *axis = new TAxis3D();
       node1->cd();
-      //node2->SetPosition(0,0,-40);
       node1->Draw("same");
-      //node2->Draw("same");
       view->SetRange(-70,-70,-100,70,70,-10);
       Int_t test;
       view->SetView(182,65,88,test);
-      axis->SetZTitle(title);
-      axis->SetTitleOffset(3,"z");
-      axis->SetTitleOffset(-100,"x");
+      TText *t = new TText(0.1,0.5,title);
+      t->SetTextColor(0);
+      
+      t->Draw("same");
       axis->Draw();
       axis->SetAxisColor(0,"x");
-      axis->SetLabelColor(0,"x");
-      axis->SetAxisColor(416,"y");
+      axis->SetLabelColor(kBlue+4,"x");
+      axis->SetAxisColor(0,"z");
+      axis->SetLabelColor(0,"z");
+      axis->SetAxisColor(kBlue-10,"y");
+      axis->SetLabelColor(kBlue-8,"y");
       trkevent++;
       for(int s=0;s<6;s++){
 	for(int i =0; i<NUM_LAYER;i++){
@@ -314,15 +319,11 @@ int main(int argc,char *argv[]){
 	    if(Pad_adc[s][i][j]<-1000){    
 	    e[s] -> SetLineColor(38);
 	  }else if(-1000<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<-10){
-	    e[s] -> SetLineColor(15);
+	    e[s] -> SetLineColor(0);
 	  }else if(-10<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<100){
 	    e[s] -> SetLineColor(92);
-          }else if(100<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<400){
-	    e[s] -> SetLineColor(94);
-          }else if(400<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<1000){
+          }else if(100<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<1000){
 	    TMarker3DBox *hit= new TMarker3DBox(x[s],y[s],Pad_tdc[s][i][j]*TimeToZ-Zoffset,r1,r2,0.1,0,s*60);
-	    printf("Z %f\n",TimeToZ*Pad_tdc[s][i][j]-Zoffset);
-	    
 	    hit->Draw();
 	    hit->SetLineColor(6);
 	    e[s] -> SetLineColor(96);
