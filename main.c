@@ -320,12 +320,12 @@ int main(int argc,char *argv[]){
 	    e[s] -> SetLineColor(38);
 	  }else if(-1000<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<-10){
 	    e[s] -> SetLineColor(0);
-	  }else if(-10<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<100){
+	  }else if(-10<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<50){
 	    e[s] -> SetLineColor(92);
-          }else if(100<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<1000){
+          }else if(50<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<1000){
 	    TMarker3DBox *hit= new TMarker3DBox(x[s],y[s],Pad_tdc[s][i][j]*TimeToZ-Zoffset,r1,r2,0.1,0,s*60);
 	    hit->Draw();
-	    hit->SetLineColor(6);
+	    hit->SetLineColor(kMagenta-9);
 	    e[s] -> SetLineColor(96);
           }else if(1000<=Pad_adc[s][i][j] && Pad_adc[s][i][j]<1200){
 	    TMarker3DBox *hit= new TMarker3DBox(x[s],y[s],Pad_tdc[s][i][j]*TimeToZ-Zoffset,r1,r2,0.1,0,s*60);
