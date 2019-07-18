@@ -73,7 +73,7 @@ int main(int argc,char *argv[]){
 
   
   TString pdf;
-  pdf.Form("pdf/display%d.pdf",run_num);
+  pdf.Form("display%d.pdf",run_num);
   c1->Print(pdf + "[", "pdf");    
   gSystem->Load("libGeom");  
   TBRIK *brik= new TBRIK("BRIK","BRIK","void",0.,0.,0.);
